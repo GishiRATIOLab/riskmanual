@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SNS運用 インタラクティブ・リスクマニュアル | @shota7180</title>
-    <!-- Chosen Palette: Warm Neutrals with Muted Blue/Teal Accent -->
-    <!-- Application Structure Plan: The application transforms the linear manual into an interactive dashboard. The primary goal is quick access to actionable tools (Checklist, Crisis Protocol) and layered exploration of detailed topics (Legal/Ethical Risks). This non-linear structure respects the user's need for 'just-in-time' information rather than sequential reading. Navigation is handled by a sticky top bar for instant access to any section, improving usability for a busy social media team. -->
+    <!-- Chosen Palette: Warm Neutrals with Muted Teal Accent -->
+    <!-- Application Structure Plan: The application transforms the linear manual into an interactive dashboard. The primary goal is quick access to actionable tools (Checklist, Crisis Protocol) and layered exploration of detailed topics (Legal/Ethical Risks, Case Studies). This non-linear structure respects the user's need for 'just-in-time' information. Navigation is handled by a sticky top bar for instant access to any section, improving usability for a busy social media team. Key workshop materials are integrated to enrich the content significantly. -->
     <!-- Visualization & Content Choices: 
-        - Legal Risks (Report Table) -> Goal: Compare -> Viz: Interactive Cards + Horizontal Bar Chart (Chart.js) -> Interaction: Click-to-reveal details, visual comparison of risk severity -> Justification: Makes dense legal text scannable and provides a quick visual summary of risk priorities.
+        - Legal Risks (Report Table) -> Goal: Compare -> Viz: Interactive Cards + Horizontal Bar Chart (Chart.js) + Detailed Penalty Table -> Interaction: Click-to-reveal details, visual comparison of risk severity -> Justification: Makes dense legal text scannable and provides a quick visual summary of risk priorities, with detailed penalty info on demand.
         - Pre-Publication Checklist (Report Table) -> Goal: Provide a tool -> Viz: HTML Interactive Checklist -> Interaction: Clickable checkboxes, progress bar -> Justification: Transforms a static list into a functional, reusable tool for daily workflow.
-        - Crisis Protocol (Report Steps) -> Goal: Guide -> Viz: HTML/CSS Step-by-Step Diagram -> Interaction: Click to expand steps -> Justification: Simplifies a complex process into a clear, scannable guide for high-stress situations.
-        - Case Studies (Report Table) -> Goal: Organize & Learn -> Viz: Filterable Card Gallery -> Interaction: Filter by category, click to reveal lesson -> Justification: Allows users to focus on relevant examples and enhances engagement through interaction.
+        - Crisis Protocol (Report Steps) -> Goal: Guide -> Viz: HTML/CSS Step-by-Step Diagram -> Interaction: Click to expand steps, added role indicators (Writer/Director) -> Justification: Simplifies a complex process for high-stress situations by clarifying responsibilities.
+        - Case Studies (Report Table) -> Goal: Organize & Learn -> Viz: Filterable, Flippable Card Gallery -> Interaction: Filter by category, click to reveal lesson -> Justification: Allows users to focus on relevant examples from the extensive list provided and enhances engagement through interaction.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,17 +26,18 @@
             max-width: 700px;
             margin-left: auto;
             margin-right: auto;
-            height: 350px;
-            max-height: 400px;
+            height: 400px;
+            max-height: 450px;
         }
         @media (max-width: 768px) {
             .chart-container {
-                height: 400px;
+                height: 450px;
             }
         }
         .nav-link {
             transition: all 0.3s ease;
             border-bottom: 2px solid transparent;
+            padding-bottom: 4px;
         }
         .nav-link:hover, .nav-link.active {
             border-bottom-color: #0d9488; /* teal-600 */
@@ -66,6 +67,7 @@
             justify-content: center;
             align-items: center;
             padding: 1rem;
+            border-radius: 0.75rem;
         }
         .card-back {
             transform: rotateY(180deg);
@@ -76,6 +78,12 @@
         .checklist-item.completed label {
             text-decoration: line-through;
             color: #64748b; /* slate-500 */
+        }
+        .table-responsive {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
@@ -89,10 +97,11 @@
                     <span class="inline-block p-2 bg-teal-600 text-white rounded-md">AI</span>
                     <h1 class="text-xl md:text-2xl font-bold text-slate-800">SNS運用リスクマニュアル</h1>
                 </div>
-                <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600">
+                <nav class="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm font-medium text-slate-600">
                     <a href="#dashboard" class="nav-link">ダッシュボード</a>
                     <a href="#legal-risks" class="nav-link">法的リスク</a>
                     <a href="#ethics" class="nav-link">倫理指針</a>
+                    <a href="#checklist" class="nav-link">チェックリスト</a>
                     <a href="#crisis-response" class="nav-link">炎上対策</a>
                     <a href="#case-studies" class="nav-link">ケーススタディ</a>
                 </nav>
@@ -109,13 +118,13 @@
             <p class="text-slate-600 mb-8">日々の投稿業務で最も重要な「公開前チェックリスト」と、万が一の際の「炎上対応プロトコル」へ素早くアクセスできます。まずはここから確認しましょう。</p>
             <div class="grid md:grid-cols-2 gap-8">
                 <!-- Pre-publication Checklist Card -->
-                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
                     <h3 class="text-xl font-bold mb-4 flex items-center"><span class="text-2xl mr-3">✅</span>投稿前最終確認</h3>
                     <p class="text-slate-600 mb-6">全ての投稿は公開前にこのチェックリストで確認を。コンプライアンス違反と炎上リスクを未然に防ぎます。</p>
                     <a href="#checklist" class="inline-block bg-teal-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-teal-700 transition-colors">チェックリストへ進む</a>
                 </div>
                 <!-- Crisis Response Card -->
-                <div class="bg-white p-6 rounded-xl shadow-md border border-red-200 bg-red-50">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-red-200 bg-red-50 hover:shadow-lg transition-shadow">
                     <h3 class="text-xl font-bold mb-4 flex items-center"><span class="text-2xl mr-3">🔥</span>クライシス対応</h3>
                     <p class="text-slate-600 mb-6">炎上の兆候を察知した場合は、慌てずこのプロトコルに従ってください。迅速かつ誠実な対応が鍵です。</p>
                     <a href="#crisis-response" class="inline-block bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition-colors">対応プロトコルへ</a>
@@ -126,7 +135,7 @@
         <!-- Section 2: Legal Risks -->
         <section id="legal-risks" class="mb-16">
             <h2 class="text-3xl font-bold mb-2 text-teal-700">主要な法的リスクの理解</h2>
-            <p class="text-slate-600 mb-8">SNS投稿には様々な法的リスクが伴います。特に注意すべき「景品表示法」「著作権法」「特定商取引法」などの概要を、インタラクティブなチャートとカードで学びましょう。</p>
+            <p class="text-slate-600 mb-8">法律は完璧ではなく、時代と共に変化します。ビジネスでは得られる利益とリスクを天秤にかける判断も必要です。その判断のため、まずはSNS投稿に伴う主要な法的リスクを理解しましょう。</p>
             
             <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200 mb-12">
                 <h3 class="text-xl font-bold text-center mb-4">SNS運用における法的リスクの重要度</h3>
@@ -136,39 +145,118 @@
             </div>
             
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Legal Risk Cards -->
-                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all" data-accordion-trigger="keihyo">
+                 <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all" data-accordion-trigger="keihyo">
                     <h4 class="text-lg font-bold mb-2">景品表示法</h4>
                     <p class="text-sm text-slate-500">誤解を招く大げさな表現はNG。広告は「#PR」を忘れずに。</p>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all" data-accordion-trigger="chosaku">
-                    <h4 class="text-lg font-bold mb-2">著作権法</h4>
-                    <p class="text-sm text-slate-500">他人のコンテンツやAI生成物の利用は慎重に。</p>
+                    <h4 class="text-lg font-bold mb-2">著作権法・商標法</h4>
+                    <p class="text-sm text-slate-500">他人のコンテンツやロゴ、AI生成物の利用は慎重に。</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all" data-accordion-trigger="tokutei">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all" data-accordion-trigger="tokusho">
                     <h4 class="text-lg font-bold mb-2">特定商取引法</h4>
                     <p class="text-sm text-slate-500">有料プログラムへの誘導は、必要な情報を明確に。</p>
                 </div>
+                 <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all" data-accordion-trigger="kojin">
+                    <h4 class="text-lg font-bold mb-2">個人情報保護法</h4>
+                    <p class="text-sm text-slate-500">ユーザー情報の取得と利用は、同意と安全管理が必須。</p>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all" data-accordion-trigger="fusei">
+                    <h4 class="text-lg font-bold mb-2">不正競争防止法</h4>
+                    <p class="text-sm text-slate-500">他社製品との比較や営業秘密の扱いに注意。</p>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all" data-accordion-trigger="meiyo">
+                    <h4 class="text-lg font-bold mb-2">名誉毀損・侮辱</h4>
+                    <p class="text-sm text-slate-500">他者を貶める表現は民事・刑事罰のリスク。</p>
+                </div>
             </div>
-            <div id="accordion-content" class="mt-6">
-                <div id="content-keihyo" class="hidden bg-slate-100 p-6 rounded-lg">
-                    <h5 class="font-bold text-lg mb-4">景品表示法：3つのポイント</h5>
-                    <ul class="space-y-3 list-disc list-inside text-slate-700">
+            <div id="accordion-content" class="mt-6 space-y-4">
+                 <div id="content-keihyo" class="hidden bg-slate-100 p-6 rounded-lg">
+                    <h5 class="font-bold text-lg mb-2">景品表示法：3つのポイント</h5>
+                    <ul class="space-y-2 list-disc list-inside text-slate-700">
                         <li><b>優良誤認表示：</b>「誰でも必ず儲かる」「確実にスキルが身につく」など、客観的根拠のない断定的な効果の表現は避けましょう。</li>
                         <li><b>有利誤認表示：</b>キャンペーン価格の通常価格を不当に吊り上げる二重価格表示などは禁止されています。</li>
                         <li><b>ステルスマーケティング（ステマ）：</b>事業者の広告・宣伝である場合は、消費者がそれを明確に認識できるよう「#PR」「#広告」などを投稿に必ず付与しましょう。</li>
                     </ul>
                 </div>
                 <div id="content-chosaku" class="hidden bg-slate-100 p-6 rounded-lg">
-                    <h5 class="font-bold text-lg mb-4">著作権法：2つのポイント</h5>
-                     <ul class="space-y-3 list-disc list-inside text-slate-700">
+                    <h5 class="font-bold text-lg mb-2">著作権法・商標法：3つのポイント</h5>
+                     <ul class="space-y-2 list-disc list-inside text-slate-700">
                         <li><b>第三者のコンテンツ利用：</b>他人の記事、画像、動画などを利用する際は、原則として許諾が必要です。「引用」のルールは厳格ですので安易なコピペは厳禁です。</li>
                         <li><b>AI生成コンテンツ：</b>AIが生成した画像等が、既存の著作物に似ていると著作権侵害になるリスクがあります。特定の作風の模倣は避け、生成物は公開前に必ずチェックしましょう。</li>
+                        <li><b>商標の尊重：</b>他社のロゴやサービス名を無断で使用して、自社のサービスと誤認させるような使い方は商標権侵害のリスクがあります。</li>
                     </ul>
                 </div>
-                <div id="content-tokutei" class="hidden bg-slate-100 p-6 rounded-lg">
-                    <h5 class="font-bold text-lg mb-4">特定商取引法：注意点</h5>
+                <div id="content-tokusho" class="hidden bg-slate-100 p-6 rounded-lg">
+                    <h5 class="font-bold text-lg mb-2">特定商取引法：注意点</h5>
                     <p class="text-slate-700">SHIFT AIの有料プログラムへ直接誘導する投稿は「通信販売」にあたる可能性があります。リンク先の申込みページには、価格、支払い方法、解約条件など、法律で定められた事項を明確に表示する必要があります。</p>
+                </div>
+                 <div id="content-kojin" class="hidden bg-slate-100 p-6 rounded-lg">
+                    <h5 class="font-bold text-lg mb-2">個人情報保護法：2つのポイント</h5>
+                     <ul class="space-y-2 list-disc list-inside text-slate-700">
+                        <li><b>同意なき公開の禁止：</b>イベント参加者の顔写真など、個人が特定できる情報を本人の同意なく投稿することはプライバシー侵害にあたります。</li>
+                        <li><b>安全管理措置：</b>プレゼント企画などで得た個人情報は、目的外に利用せず、漏洩しないよう厳重に管理する義務があります。</li>
+                    </ul>
+                </div>
+                 <div id="content-fusei" class="hidden bg-slate-100 p-6 rounded-lg">
+                    <h5 class="font-bold text-lg mb-2">不正競争防止法：2つのポイント</h5>
+                    <ul class="space-y-2 list-disc list-inside text-slate-700">
+                        <li><b>比較広告の注意点：</b>他社製品と比較する際は、客観的なデータに基づかない「断然優れている」といった表現は避けましょう。</li>
+                        <li><b>営業秘密の保護：</b>他社の内部資料など、不正に取得した営業秘密を公開・利用してはなりません。</li>
+                    </ul>
+                </div>
+                 <div id="content-meiyo" class="hidden bg-slate-100 p-6 rounded-lg">
+                    <h5 class="font-bold text-lg mb-2">名誉毀損・侮辱：ポイント</h5>
+                    <p class="text-slate-700">他者（個人・企業）の社会的評価を下げる虚偽の事実の指摘（名誉毀損）や、事実を摘示せず「バカ」などの抽象的な表現で侮辱する行為（侮辱罪）は刑事罰の対象です。批判的な内容を発信する際は、客観性と公正さを保つことが重要です。</p>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <h3 class="text-2xl font-bold mb-4 text-center">民事・刑事リスクの詳細</h3>
+                 <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200">
+                    <div class="table-responsive">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">法的領域</th>
+                                    <th scope="col" class="px-6 py-3">民事リスク</th>
+                                    <th scope="col" class="px-6 py-3">刑事リスク（罰則例）</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b">
+                                    <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">著作権法・商標法</th>
+                                    <td class="px-6 py-4">損害賠償・差止請求</td>
+                                    <td class="px-6 py-4">10年以下の懲役または1,000万円以下の罰金</td>
+                                </tr>
+                                <tr class="bg-slate-50 border-b">
+                                    <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">個人情報保護法</th>
+                                    <td class="px-6 py-4">損害賠償請求</td>
+                                    <td class="px-6 py-4">1年以下の懲役または100万円以下の罰金（不正提供等）</td>
+                                </tr>
+                                <tr class="bg-white border-b">
+                                    <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">不正競争防止法</th>
+                                    <td class="px-6 py-4">損害賠償・差止請求</td>
+                                    <td class="px-6 py-4">10年以下の懲役または2,000万円以下の罰金</td>
+                                </tr>
+                                 <tr class="bg-slate-50 border-b">
+                                    <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">特定商取引法</th>
+                                    <td class="px-6 py-4">返金・損害賠償請求</td>
+                                    <td class="px-6 py-4">3年以下の懲役または300万円以下の罰金（不実告知等）</td>
+                                </tr>
+                                <tr class="bg-white border-b">
+                                    <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">景品表示法</th>
+                                    <td class="px-6 py-4">行政指導・課徴金</td>
+                                    <td class="px-6 py-4">なし（ただし詐欺罪等に問われる可能性あり）</td>
+                                </tr>
+                                <tr class="bg-slate-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">名誉毀損・侮辱</th>
+                                    <td class="px-6 py-4">損害賠償請求</td>
+                                    <td class="px-6 py-4">名誉毀損: 3年以下の懲役 / 侮辱: 1年以下の懲役</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
@@ -176,32 +264,22 @@
         <!-- Section 3: Ethics -->
         <section id="ethics" class="mb-16">
             <h2 class="text-3xl font-bold mb-2 text-teal-700">AI情報発信における倫理指針</h2>
-            <p class="text-slate-600 mb-8">法律を守るだけでなく、AIを扱う企業として高い倫理観が求められます。ユーザーとの信頼関係を築くための5つの指針です。</p>
-            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 text-center">
+            <p class="text-slate-600 mb-8">法律遵守は最低ライン。AIを扱う企業として高い倫理観が求められます。ユーザーとの信頼関係を築くための5つの指針です。</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 text-center">
                 <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                    <div class="text-3xl mb-2">⚖️</div>
-                    <h4 class="font-bold">透明性</h4>
-                    <p class="text-xs text-slate-500 mt-1">AIの能力と限界を正直に伝える</p>
+                    <div class="text-3xl mb-2">⚖️</div><h4 class="font-bold">透明性</h4><p class="text-xs text-slate-500 mt-1">AIの能力と限界を正直に伝える</p>
                 </div>
                 <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                    <div class="text-3xl mb-2">🎯</div>
-                    <h4 class="font-bold">正確性と誠実性</h4>
-                    <p class="text-xs text-slate-500 mt-1">根拠のある情報のみ発信する</p>
+                    <div class="text-3xl mb-2">🎯</div><h4 class="font-bold">正確性と誠実性</h4><p class="text-xs text-slate-500 mt-1">根拠のある情報のみ発信する</p>
                 </div>
                 <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                    <div class="text-3xl mb-2">🌍</div>
-                    <h4 class="font-bold">公平性と包括性</h4>
-                    <p class="text-xs text-slate-500 mt-1">バイアスや偏見を助長しない</p>
+                    <div class="text-3xl mb-2">🌍</div><h4 class="font-bold">公平性と包括性</h4><p class="text-xs text-slate-500 mt-1">バイアスや偏見を助長しない</p>
                 </div>
                 <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                    <div class="text-3xl mb-2">🤝</div>
-                    <h4 class="font-bold">説明責任</h4>
-                    <p class="text-xs text-slate-500 mt-1">発信した情報に責任を持つ</p>
+                    <div class="text-3xl mb-2">🤝</div><h4 class="font-bold">説明責任</h4><p class="text-xs text-slate-500 mt-1">発信した情報に責任を持つ</p>
                 </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
-                    <div class="text-3xl mb-2">🎨</div>
-                    <h4 class="font-bold">人間への尊重</h4>
-                    <p class="text-xs text-slate-500 mt-1">人間の創造性や労働の価値を尊重する</p>
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 col-span-2 md:col-span-1">
+                    <div class="text-3xl mb-2">🎨</div><h4 class="font-bold">人間への尊重</h4><p class="text-xs text-slate-500 mt-1">人間の創造性や労働の価値を尊重する</p>
                 </div>
             </div>
         </section>
@@ -209,26 +287,29 @@
         <!-- Section 4: Pre-publication Checklist -->
         <section id="checklist" class="mb-16 bg-white p-8 rounded-xl shadow-lg border border-slate-200">
             <h2 class="text-3xl font-bold mb-2 text-teal-700">投稿公開前チェックリスト</h2>
-            <p class="text-slate-600 mb-6">このインタラクティブなリストを使って、投稿内容を最終確認してください。全ての項目にチェックが入れば公開OKです。</p>
+            <p class="text-slate-600 mb-6">このインタラクティブなリストを使って、投稿内容を最終確認してください。全ての項目にチェックが入れば公開OKです。（迷ったら出さないのが基本）</p>
             <div class="mb-4">
-                <div class="w-full bg-slate-200 rounded-full h-2.5">
-                    <div id="checklist-progress" class="bg-teal-600 h-2.5 rounded-full" style="width: 0%"></div>
-                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2.5"><div id="checklist-progress" class="bg-teal-600 h-2.5 rounded-full" style="width: 0%"></div></div>
             </div>
-            <form id="publication-checklist" class="space-y-4">
-                <h4 class="font-bold mt-6 border-b pb-2">法的コンプライアンス</h4>
-                <div class="checklist-item"><input type="checkbox" id="c1" class="mr-2"><label for="c1">景品表示法：優良・有利誤認やステマにあたる表現はないか？(#PRは付けたか？)</label></div>
-                <div class="checklist-item"><input type="checkbox" id="c2" class="mr-2"><label for="c2">著作権法：使用する画像・文章の権利はクリアか？(AI生成物も含む)</label></div>
-                <div class="checklist-item"><input type="checkbox" id="c3" class="mr-2"><label for="c3">特定商取引法：有料誘導がある場合、リンク先の表示は適切か？</label></div>
+            <form id="publication-checklist" class="space-y-4 text-sm md:text-base">
+                <h4 class="font-bold mt-6 border-b pb-2">1. 権利侵害チェック</h4>
+                <div class="checklist-item"><input type="checkbox" id="c1" class="mr-2"><label for="c1">著作権：画像・テキスト・BGM等の権利はクリアか？（AI生成物も含む）</label></div>
+                <div class="checklist-item"><input type="checkbox" id="c2" class="mr-2"><label for="c2">商標権：他社のロゴや名称を不適切に使用していないか？</label></div>
+                <div class="checklist-item"><input type="checkbox" id="c3" class="mr-2"><label for="c3">肖像権/プライバシー：人物が写っている場合、許諾は得ているか？個人を特定できる情報はないか？</label></div>
                 
-                <h4 class="font-bold mt-6 border-b pb-2">倫理的妥当性</h4>
-                <div class="checklist-item"><input type="checkbox" id="c4" class="mr-2"><label for="c4">透明性・正確性：AIの限界や根拠を明示し、過度な期待を煽っていないか？</label></div>
-                <div class="checklist-item"><input type="checkbox" id="c5" class="mr-2"><label for="c5">公平性・包括性：誰かを傷つけたり、差別を助長したりする表現はないか？</label></div>
+                <h4 class="font-bold mt-6 border-b pb-2">2. 法令遵守チェック</h4>
+                <div class="checklist-item"><input type="checkbox" id="c4" class="mr-2"><label for="c4">景品表示法：誇大広告(優良誤認)や有利誤認はないか？広告なら「#PR」を付けたか？</label></div>
+                <div class="checklist-item"><input type="checkbox" id="c5" class="mr-2"><label for="c5">特定商取引法：有料誘導がある場合、リンク先の表示（価格、解約条件等）は適切か？</label></div>
+                <div class="checklist-item"><input type="checkbox" id="c6" class="mr-2"><label for="c6">不正競争防止法：他社比較で、根拠なく「優れている」等の表現をしていないか？</label></div>
+
+                <h4 class="font-bold mt-6 border-b pb-2">3. 倫理・ブランド観点チェック</h4>
+                <div class="checklist-item"><input type="checkbox" id="c7" class="mr-2"><label for="c7">差別・ヘイト：人種、性別、宗教等で誰かを傷つける、または対立を煽る表現はないか？</label></div>
+                <div class="checklist-item"><input type="checkbox" id="c8" class="mr-2"><label for="c8">正確性・透明性：情報は正確か？AIの限界やリスクについて、過度な期待を煽っていないか？</label></div>
+                <div class="checklist-item"><input type="checkbox" id="c9" class="mr-2"><label for="c9">トーン＆マナー：SHIFT AIのブランドイメージと合致しているか？攻撃的・扇情的でないか？</label></div>
                 
-                <h4 class="font-bold mt-6 border-b pb-2">ブランド・事実確認</h4>
-                <div class="checklist-item"><input type="checkbox" id="c6" class="mr-2"><label for="c6">事実確認：記載情報（日付、数値、名称等）はすべて正確か？</label></div>
-                <div class="checklist-item"><input type="checkbox" id="c7" class="mr-2"><label for="c7">トーン＆マナー：SHIFT AIのブランドイメージと合致しているか？攻撃的でないか？</label></div>
-                <div class="checklist-item"><input type="checkbox" id="c8" class="mr-2"><label for="c8">Xポリシー：Xの利用規約やポリシーに違反していないか？</label></div>
+                <h4 class="font-bold mt-6 border-b pb-2">4. プラットフォーム・セキュリティチェック</h4>
+                <div class="checklist-item"><input type="checkbox" id="c10" class="mr-2"><label for="c10">Xポリシー：Xの利用規約やポリシー（スパム、なりすまし等）に違反していないか？</label></div>
+                <div class="checklist-item"><input type="checkbox" id="c11" class="mr-2"><label for="c11">セキュリティ：不正アクセスに繋がるようなリンクや情報はないか？</label></div>
             </form>
             <div class="mt-8 text-center">
                 <button id="reset-checklist" class="bg-slate-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-slate-600 transition-colors">リセット</button>
@@ -241,49 +322,49 @@
             <p class="text-slate-600 mb-8">万が一の事態に備え、冷静に対応するための手順です。ステップをクリックして詳細を確認してください。</p>
             <div class="space-y-4">
                 <div class="crisis-step" data-step="1">
-                    <div class="flex items-center p-4 bg-white rounded-lg shadow-md cursor-pointer border-l-4 border-red-500">
-                        <span class="text-2xl font-bold text-red-500 mr-4">1</span>
-                        <h4 class="font-bold text-lg">検知と状況評価</h4>
+                    <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-md cursor-pointer border-l-4 border-red-500">
+                         <div class="flex items-center">
+                            <span class="text-2xl font-bold text-red-500 mr-4">1</span><h4 class="font-bold text-lg">検知と状況評価</h4>
+                        </div>
+                        <span class="text-xs font-bold text-white bg-blue-600 px-2 py-1 rounded-full">担当：ライター</span>
                     </div>
-                    <div class="step-content hidden p-4 mt-2 bg-red-50 rounded-lg">
-                        <p>ソーシャルリスニングで炎上の兆候を早期発見。批判の内容、拡散範囲、影響度を客観的に評価します。</p>
-                    </div>
+                    <div class="step-content hidden p-4 mt-2 bg-red-50 rounded-lg"><p>ソーシャルリスニングで炎上の兆候を早期発見。批判の内容、拡散範囲、影響度を客観的に評価し、速やかにディレクターに報告します。</p></div>
                 </div>
                 <div class="crisis-step" data-step="2">
-                    <div class="flex items-center p-4 bg-white rounded-lg shadow-md cursor-pointer border-l-4 border-red-500">
-                        <span class="text-2xl font-bold text-red-500 mr-4">2</span>
-                        <h4 class="font-bold text-lg">内部共有と事実確認</h4>
+                    <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-md cursor-pointer border-l-4 border-red-500">
+                        <div class="flex items-center">
+                            <span class="text-2xl font-bold text-red-500 mr-4">2</span><h4 class="font-bold text-lg">内部共有と事実確認</h4>
+                        </div>
+                        <span class="text-xs font-bold text-white bg-green-600 px-2 py-1 rounded-full">担当：ディレクター</span>
                     </div>
-                     <div class="step-content hidden p-4 mt-2 bg-red-50 rounded-lg">
-                        <p>関係各所に速やかに情報共有。憶測で動かず、原因となった事実を正確に把握します。（証拠保全を忘れずに）</p>
-                    </div>
+                     <div class="step-content hidden p-4 mt-2 bg-red-50 rounded-lg"><p>ライターからの報告を受け、関係各所に速やかに情報共有。憶測で動かず、原因となった事実を正確に把握します。（証拠保全を忘れずに）</p></div>
                 </div>
                  <div class="crisis-step" data-step="3">
-                    <div class="flex items-center p-4 bg-white rounded-lg shadow-md cursor-pointer border-l-4 border-red-500">
-                        <span class="text-2xl font-bold text-red-500 mr-4">3</span>
-                        <h4 class="font-bold text-lg">対応方針の決定</h4>
+                    <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-md cursor-pointer border-l-4 border-red-500">
+                        <div class="flex items-center">
+                            <span class="text-2xl font-bold text-red-500 mr-4">3</span><h4 class="font-bold text-lg">対応方針の決定</h4>
+                        </div>
+                        <span class="text-xs font-bold text-white bg-green-600 px-2 py-1 rounded-full">担当：ディレクター</span>
                     </div>
-                    <div class="step-content hidden p-4 mt-2 bg-red-50 rounded-lg">
-                        <p>事実に基づき、「無視」「訂正・説明」「謝罪」などの対応方針を決定します。投稿削除は慎重に判断します。</p>
-                    </div>
+                    <div class="step-content hidden p-4 mt-2 bg-red-50 rounded-lg"><p>事実に基づき、「無視」「訂正・説明」「謝罪」などの対応方針を決定します。投稿削除は慎重に判断し、必要に応じて上位者や法務に相談します。</p></div>
                 </div>
                  <div class="crisis-step" data-step="4">
-                    <div class="flex items-center p-4 bg-white rounded-lg shadow-md cursor-pointer border-l-4 border-red-500">
-                        <span class="text-2xl font-bold text-red-500 mr-4">4</span>
-                        <h4 class="font-bold text-lg">対応の実行と発信</h4>
+                    <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-md cursor-pointer border-l-4 border-red-500">
+                        <div class="flex items-center">
+                            <span class="text-2xl font-bold text-red-500 mr-4">4</span><h4 class="font-bold text-lg">対応の実行と発信</h4>
+                        </div>
+                        <span class="text-xs font-bold text-white bg-blue-600 px-2 py-1 rounded-full">担当：ライター</span>
                     </div>
-                     <div class="step-content hidden p-4 mt-2 bg-red-50 rounded-lg">
-                        <p>決定した方針に基づき、可能な限り迅速に対応を発信。責任転嫁と取られる態度は厳禁。誠実な言葉で伝えます。</p>
-                    </div>
+                     <div class="step-content hidden p-4 mt-2 bg-red-50 rounded-lg"><p>ディレクターが決定・承認した方針に基づき、ライターが対応（謝罪文の投稿など）を実行します。責任転嫁と取られる態度は厳禁。誠実な言葉で伝えます。</p></div>
                 </div>
                 <div class="crisis-step" data-step="5">
-                    <div class="flex items-center p-4 bg-white rounded-lg shadow-md cursor-pointer border-l-4 border-red-500">
-                        <span class="text-2xl font-bold text-red-500 mr-4">5</span>
-                        <h4 class="font-bold text-lg">事後検証と再発防止</h4>
+                    <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-md cursor-pointer border-l-4 border-red-500">
+                        <div class="flex items-center">
+                            <span class="text-2xl font-bold text-red-500 mr-4">5</span><h4 class="font-bold text-lg">事後検証と再発防止</h4>
+                        </div>
+                        <span class="text-xs font-bold text-white bg-green-600 px-2 py-1 rounded-full">担当：ディレクター</span>
                     </div>
-                     <div class="step-content hidden p-4 mt-2 bg-red-50 rounded-lg">
-                        <p>沈静化後、原因と対応を徹底的に分析し、具体的な再発防止策を策定・実行します。</p>
-                    </div>
+                     <div class="step-content hidden p-4 mt-2 bg-red-50 rounded-lg"><p>沈静化後、原因と対応を徹底的に分析し、具体的な再発防止策を策定・実行します。マニュアルやチェックリストの更新も検討します。</p></div>
                 </div>
             </div>
         </section>
@@ -294,10 +375,11 @@
             <p class="text-slate-600 mb-8">他社の事例は最高の教科書です。カードをクリックすると、事例から得られる教訓が表示されます。カテゴリで絞り込みも可能です。</p>
             <div class="flex flex-wrap gap-2 mb-8">
                 <button class="case-filter-btn active" data-filter="all">すべて</button>
-                <button class="case-filter-btn" data-filter="quality">品質問題</button>
-                <button class="case-filter-btn" data-filter="expression">不適切表現</button>
-                <button class="case-filter-btn" data-filter="ai-ethics">AI倫理</button>
-                <button class="case-filter-btn" data-filter="communication">コミュニケーション</button>
+                <button class="case-filter-btn" data-filter="expression">不適切・差別表現</button>
+                <button class="case-filter-btn" data-filter="copyright">著作権・転載</button>
+                <button class="case-filter-btn" data-filter="corporate">企業の問題行動</button>
+                <button class="case-filter-btn" data-filter="info">嘘・デマ・情報操作</button>
+                <button class="case-filter-btn" data-filter="privacy">プライバシー侵害</button>
             </div>
             <div id="case-study-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Case study cards will be injected here by JS -->
@@ -314,50 +396,43 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-
     // --- Navigation ---
     const navLinks = document.querySelectorAll('.nav-link');
     const sections = document.querySelectorAll('section');
 
-    window.addEventListener('scroll', () => {
-        let current = '';
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            if (pageYOffset >= sectionTop - 70) {
-                current = section.getAttribute('id');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === entry.target.id) {
+                        link.classList.add('active');
+                    }
+                });
             }
         });
+    }, { rootMargin: '-50% 0px -50% 0px' });
 
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href').includes(current)) {
-                link.classList.add('active');
-            }
-        });
+    sections.forEach(section => {
+        observer.observe(section);
     });
 
     // --- Legal Risk Chart ---
     const ctx = document.getElementById('legalRiskChart').getContext('2d');
-    const legalRiskChart = new Chart(ctx, {
+    new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['景品表示法(ステマ等)', '著作権法(AI生成物含む)', '特定商取引法', '名誉毀損・侮辱', '個人情報保護法'],
+            labels: ['著作権法・商標法', '景品表示法(ステマ等)', '名誉毀損・侮辱', '特定商取引法', '不正競争防止法', '個人情報保護法'],
             datasets: [{
                 label: '想定されるリスク度（高→低）',
-                data: [90, 85, 70, 65, 60],
+                data: [90, 88, 85, 80, 75, 70],
                 backgroundColor: [
                     'rgba(13, 148, 136, 0.7)', // teal-600
                     'rgba(15, 118, 110, 0.7)', // teal-700
                     'rgba(17, 94, 89, 0.7)',   // teal-800
                     'rgba(51, 65, 85, 0.7)',   // slate-700
-                    'rgba(71, 85, 105, 0.7)'   // slate-600
-                ],
-                borderColor: [
-                    'rgba(13, 148, 136, 1)',
-                    'rgba(15, 118, 110, 1)',
-                    'rgba(17, 94, 89, 1)',
-                    'rgba(51, 65, 85, 1)',
-                    'rgba(71, 85, 105, 1)'
+                    'rgba(71, 85, 105, 0.7)',  // slate-600
+                    'rgba(100, 116, 139, 0.7)' // slate-500
                 ],
                 borderWidth: 1
             }]
@@ -366,56 +441,22 @@ document.addEventListener('DOMContentLoaded', () => {
             indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    ticks: {
-                        display: false
-                    }
-                },
-                y: {
-                   ticks: {
-                       font: {
-                           size: 14
-                       }
-                   }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: false,
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return ' リスクレベル: ' + context.parsed.x;
-                        }
-                    }
-                }
-            }
+            scales: { x: { beginAtZero: true, ticks: { display: false } }, y: { ticks: { font: { size: 14 } } } },
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ` リスクレベル: ${c.parsed.x}` } } }
         }
     });
     
     // --- Legal Risk Accordion ---
     const accordionTriggers = document.querySelectorAll('[data-accordion-trigger]');
-    const accordionContents = document.querySelector('#accordion-content');
+    let openAccordion = null;
     accordionTriggers.forEach(trigger => {
         trigger.addEventListener('click', () => {
-            const contentId = 'content-' + trigger.dataset.accordionTrigger;
-            const contentEl = document.getElementById(contentId);
-            
-            // Hide all contents
-            accordionContents.querySelectorAll('div').forEach(el => {
-                if (el.id !== contentId) {
-                    el.classList.add('hidden');
-                }
-            });
-
-            // Toggle selected content
+            const contentEl = document.getElementById('content-' + trigger.dataset.accordionTrigger);
+            if (openAccordion && openAccordion !== contentEl) {
+                openAccordion.classList.add('hidden');
+            }
             contentEl.classList.toggle('hidden');
+            openAccordion = contentEl.classList.contains('hidden') ? null : contentEl;
         });
     });
 
@@ -430,47 +471,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalCount = checkboxes.length;
         const percentage = totalCount > 0 ? (checkedCount / totalCount) * 100 : 0;
         progressBar.style.width = percentage + '%';
-        
-        checkboxes.forEach(cb => {
-            if (cb.checked) {
-                cb.parentElement.classList.add('completed');
-            } else {
-                cb.parentElement.classList.remove('completed');
-            }
-        });
+        checkboxes.forEach(cb => { cb.parentElement.classList.toggle('completed', cb.checked); });
     }
-
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateProgress);
-    });
-
+    checkboxes.forEach(checkbox => checkbox.addEventListener('change', updateProgress));
     resetButton.addEventListener('click', () => {
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = false;
-        });
+        checkboxes.forEach(checkbox => { checkbox.checked = false; });
         updateProgress();
     });
-
     updateProgress();
     
     // --- Crisis Response Steps ---
     const crisisSteps = document.querySelectorAll('.crisis-step');
     crisisSteps.forEach(step => {
-        const header = step.querySelector('div:first-child');
-        const content = step.querySelector('.step-content');
-        header.addEventListener('click', () => {
-            content.classList.toggle('hidden');
+        step.querySelector('div:first-child').addEventListener('click', () => {
+            step.querySelector('.step-content').classList.toggle('hidden');
         });
     });
     
     // --- Case Studies ---
     const caseStudiesData = [
-        { category: 'quality', title: 'チロルチョコ 虫混入騒動', summary: '消費者がSNSに虫混入写真を投稿。', lesson: '【教訓】批判に対し、まず事実関係を迅速かつ客観的に調査・特定する。冷静かつ誠実なコミュニケーションが信頼を維持する。', color: 'bg-blue-100' },
-        { category: 'ai-ethics', title: 'マクドナルド AI広告', summary: '生成AIによる美少女がポテトを食べる動画広告。', lesson: '【教訓】AI生成コンテンツは、意図した効果やブランドイメージと合致するか慎重に評価する。特に食品など感覚に訴えるものは注意。クリエイターへの配慮も必要。', color: 'bg-purple-100'},
-        { category: 'expression', title: 'アサヒビール「キンプリいじり」', summary: '新CM告知文が、人気アイドルの脱退騒動時のファンの反応を想起させると批判。', lesson: '【教訓】時事ネタや特定のコミュニティに関連する話題を扱う際は、極めて慎重に。意図せずとも、誰かを傷つけたり不快にさせたりする可能性を多角的に検討する。', color: 'bg-pink-100' },
-        { category: 'communication', title: 'タビオ 公式Xの投稿', summary: '一般ユーザーの投稿に対し、喧嘩腰で高圧的なリプライ。', lesson: '【教訓】公式アカウントの運用担当者は、常に企業の代表としての自覚を持つ。個人的感情や意見を公式アカウントで発信しないよう徹底した教育が必要。', color: 'bg-orange-100' },
-        { category: 'expression', title: '大手物流企業「すっぴん」動画', summary: '女性を揶揄する内容、「すっぴん＝恥」という固定観念を助長すると批判。', lesson: '【教訓】ジェンダーに関する表現は特に慎重に。ステレオタイプを強化したり、特定の性別を嘲笑したりする内容は避ける。', color: 'bg-pink-100' },
-        { category: 'expression', title: 'Dove 駅ナカ広告', summary: 'コピーとビジュアルの意図が伝わらず、逆にルッキズムを助長すると批判。', lesson: '【教訓】メッセージの意図と受け手の解釈が乖離するリスクを認識する。特に多様性や価値観に関わるテーマは表現方法に細心の注意を払う。', color: 'bg-pink-100' }
+        { category: 'expression', title: '大手物流企業「すっぴん」動画', summary: '女性を揶揄する「すっぴん＝恥」という固定観念を助長すると批判。', lesson: '【教訓】ジェンダーに関する表現は特に慎重に。ステレオタイプを強化する内容は避ける。', color: 'bg-pink-100' },
+        { category: 'corporate', title: 'タビオ 公式Xの投稿', summary: '一般ユーザーに高圧的なリプライ。', lesson: '【教訓】公式アカウントは企業の代表。担当者の個人的感情での発信は厳禁。', color: 'bg-orange-100' },
+        { category: 'copyright', title: 'インフルエンサーによる作品無断転載', summary: '他人の作品画像を無断で転載し、自身の投稿として発信。', lesson: '【教訓】著作権侵害は法的リスク。ファンや作者の感情も害する。必ず許諾を得るか、引用のルールを厳守する。', color: 'bg-indigo-100' },
+        { category: 'info', title: '政治家による虚偽情報拡散', summary: '選挙直前に、対立候補に関する虚偽情報を拡散。', lesson: '【教訓】デマや虚偽情報は、社会の混乱を招き、信用を失墜させる。公的な立場にある者は特に情報の正確性に責任を持つべき。', color: 'bg-yellow-100' },
+        { category: 'privacy', title: '医療関係者による患者情報投稿', summary: '患者情報が特定可能な形でSNSに投稿される。', lesson: '【教訓】個人情報保護法違反であり、重大なプライバシー侵害。職業倫理の徹底が必要。', color: 'bg-green-100' },
+        { category: 'corporate', title: 'バイトテロ動画の拡散', summary: '店員が食べ物を粗末に扱う動画を投稿し拡散。', lesson: '【教訓】従業員教育の重要性。衛生管理や企業コンプライアンスの意識を徹底する必要がある。顧客の信頼を根本から破壊する行為。', color: 'bg-orange-100' },
+        { category: 'expression', title: 'アサヒビール「キンプリいじり」', summary: '新CM告知文が、人気アイドルのファン層を不快にさせると批判。', lesson: '【教訓】時事ネタや特定のコミュニティの話題は慎重に。意図せずとも誰かを傷つける可能性を多角的に検討する。', color: 'bg-pink-100' },
+        { category: 'corporate', title: 'チロルチョコ 虫混入騒動', summary: '消費者の虫混入写真投稿に対し、迅速に調査し冷静に事実を発表。', lesson: '【教訓】批判に対し、まず事実関係を迅速かつ客観的に調査・特定する。冷静かつ誠実なコミュニケーションが信頼を維持する。', color: 'bg-blue-100' },
+        { category: 'copyright', title: 'マクドナルド AI広告', summary: '生成AIによる広告が「不気味」と批判。クリエイターへの配慮不足も指摘。', lesson: '【教訓】AI生成コンテンツは、ブランドイメージと合致するか慎重に評価。クリエイターコミュニティへの配慮も必要。', color: 'bg-indigo-100' },
     ];
 
     const grid = document.getElementById('case-study-grid');
@@ -484,21 +512,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'card-flip h-64';
             card.innerHTML = `
-                <div class="card-inner rounded-xl shadow-md border border-slate-200">
-                    <div class="card-front ${study.color} rounded-xl">
-                        <h4 class="text-xl font-bold text-center">${study.title}</h4>
-                        <p class="text-sm text-slate-600 mt-2 text-center">${study.summary}</p>
+                <div class="card-inner">
+                    <div class="card-front ${study.color} flex flex-col justify-center items-center text-center p-4">
+                        <h4 class="text-xl font-bold">${study.title}</h4>
+                        <p class="text-sm text-slate-700 mt-2">${study.summary}</p>
                         <span class="absolute bottom-4 text-xs font-bold text-slate-500">クリックして教訓を見る</span>
                     </div>
-                    <div class="card-back bg-white rounded-xl">
+                    <div class="card-back bg-white p-4">
                         <h5 class="font-bold text-teal-700 mb-2">得られる教訓</h5>
                         <p class="text-sm text-slate-700">${study.lesson}</p>
                     </div>
                 </div>
             `;
-            card.addEventListener('click', () => {
-                card.classList.toggle('is-flipped');
-            });
+            card.addEventListener('click', () => card.classList.toggle('is-flipped'));
             grid.appendChild(card);
         });
     }
@@ -509,16 +535,11 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.add('active', 'bg-teal-600', 'text-white');
             renderCases(btn.dataset.filter);
         });
-        
-        btn.classList.add('px-4', 'py-1', 'rounded-full', 'text-sm', 'font-medium', 'transition-colors', 'border');
-        if (!btn.classList.contains('active')) {
-           btn.classList.add('bg-white', 'text-slate-700', 'border-slate-300', 'hover:bg-slate-100');
-        }
+        btn.classList.add('px-3', 'py-1', 'rounded-full', 'text-sm', 'font-medium', 'transition-colors', 'border', 'border-slate-300', 'bg-white', 'text-slate-700', 'hover:bg-slate-100');
     });
     
-    document.querySelector('.case-filter-btn[data-filter="all"]').classList.add('active', 'bg-teal-600', 'text-white');
-    document.querySelector('.case-filter-btn[data-filter="all"]').classList.remove('bg-white', 'text-slate-700', 'border-slate-300');
-
+    document.querySelector('.case-filter-btn.active').classList.remove('bg-white', 'text-slate-700', 'border-slate-300', 'hover:bg-slate-100');
+    document.querySelector('.case-filter-btn.active').classList.add('bg-teal-600', 'text-white');
 
     renderCases();
 });
@@ -526,3 +547,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
